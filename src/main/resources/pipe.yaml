@@ -1,0 +1,19 @@
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: kafka-to-handler-pipe
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: kafka-source
+    properties:
+      bootstrapServers: "{{env:KAFKA_BOOTSTRAP_SERVERS}}"
+      topic: "{{env:KAFKA_TOPIC_NAME}}"
+      consumerGroup: "{{env:KAFKA_CONSUMER_GROUP}}"
+      user: ""
+      password: ""
+      securityProtocol: "PLAINTEXT"
+  sink:
+    uri: "bean://com.redhat.serverless.Processor?method=process"
