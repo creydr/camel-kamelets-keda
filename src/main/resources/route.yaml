@@ -1,0 +1,23 @@
+- from:
+    uri: "kamelet:kafka-source"
+    parameters:
+      bootstrapServers: "{{env:KAFKA_BOOTSTRAP_SERVERS}}"
+      topic: "{{env:KAFKA_TOPIC_NAME}}"
+      consumerGroup: "{{env:KAFKA_CONSUMER_GROUP}}"
+      user: ""
+      password: ""
+      securityProtocol: "PLAINTEXT"
+    steps:
+      - to: "bean://com.redhat.serverless.Processor?method=process"
+      - choice:
+          when:
+            - simple: "${env:KAFKA_SINK_TOPIC_NAME} != ''"
+              steps:
+                - to:
+                    uri: "kamelet:kafka-sink"
+                    parameters:
+                      bootstrapServers: "{{env:KAFKA_BOOTSTRAP_SERVERS}}"
+                      topic: "{{env:KAFKA_SINK_TOPIC_NAME}}"
+                      user: ""
+                      password: ""
+                      securityProtocol: "PLAINTEXT"
